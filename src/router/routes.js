@@ -1,10 +1,14 @@
 
 const routes = [
+  { path: '/toolbar', component: () => import('pages/ToolBar.vue') },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: '/options', component: () => import('pages/IndexPage.vue') },
+      { path: '/popup', component: () => import('pages/IndexPage.vue') },
+      { path: '/toolbar', component: () => import('pages/ToolBar.vue') },
     ]
   },
 

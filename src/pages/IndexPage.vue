@@ -15,3 +15,10 @@ export default defineComponent({
   name: 'IndexPage'
 })
 </script>
+<style lang="scss">
+  body{
+    background-color: #f5f5f5;
+    width: 1000px;
+    height: 1000px;
+  }
+</style>

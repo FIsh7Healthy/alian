@@ -1,20 +1,57 @@
 // Hooks added here have a bridge allowing communication between the BEX Content Script and the Quasar Application.
 // More info: https://quasar.dev/quasar-cli/developing-browser-extensions/content-hooks
 
+// src-bex/my-content-script.js
+
+// Hooks added here have a bridge allowing communication between the BEX Content Script and the Quasar Application.
+// More info: https://quasar.dev/quasar-cli/developing-browser-extensions/content-hooks
 import { bexContent } from 'quasar/wrappers'
 
-export default bexContent((/* bridge */) => {
-  // Hook into the bridge to listen for events sent from the client BEX.
-  /*
-  bridge.on('some.event', event => {
-    if (event.data.yourProp) {
-      // Access a DOM element from here.
-      // Document in this instance is the underlying website the contentScript runs on
-      const el = document.getElementById('some-id')
-      if (el) {
-        el.value = 'Quasar Rocks!'
-      }
-    }
-  })
-  */
+const iFrame = document.createElement('iframe');
+iFrame.id = 'bex-app-iframe'
+
+// Assign some styling so it looks seamless
+Object.assign(iFrame.style, {
+  display: 'none',
+  position : 'fixed',
+  zIndex : '9999999',
+  overflow : 'visible',
+  borderRadius : '5px',
+  backgroundColor : '#fff',
+  boxShadow : '0 0 20px rgba(0,0,0,.3)',
+  padding : '10px',
+  border : '0',
 })
+
+;(function () {
+  // When the page loads, insert our browser extension app.
+  iFrame.src = chrome.runtime.getURL('www/index.html#toolbar')
+  document.body.prepend(iFrame)
+
+  let startTime = Date.now();
+  document.addEventListener("mousedown", function (event) {
+    startTime = Date.now();
+  });
+
+  document.addEventListener("mouseup", function (evt) {
+    const selectedText = window.getSelection().toString().trim();
+    const endTime = Date.now();
+    if (selectedText.length > 1 && endTime - startTime > 10 && iFrame.style.display === "none") {
+      iFrame.style.display = "block";
+      iFrame.style.top = evt.clientY + 20 + 'px'
+      iFrame.style.left = evt.clientX + 'px'
+      console.log('我被执行了！',selectedText);
+    } else {
+      iFrame.style.display = "none";
+    }
+  });
+})()
+
+export default bexContent((bridge) => {
+  bridge.on('wb.command', ({ data, respond }) => {
+    console.log('wb.command', data)
+    respond()
+  })
+})
+
+
