@@ -1,6 +1,7 @@
 
 const routes = [
   { path: '/toolbar', component: () => import('pages/ToolBar.vue') },
+  { path: '/interaction', component: () => import('pages/InteractionPage.vue') },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),

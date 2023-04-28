@@ -23,6 +23,7 @@ Object.assign(iFrame.style, {
   border : '0',
 })
 
+iFrame.selectedText = "";
 ;(function () {
   // When the page loads, insert our browser extension app.
   iFrame.src = chrome.runtime.getURL('www/index.html#toolbar')
@@ -34,13 +35,12 @@ Object.assign(iFrame.style, {
   });
 
   document.addEventListener("mouseup", function (evt) {
-    const selectedText = window.getSelection().toString().trim();
+    iFrame.selectedText = window.getSelection().toString().trim();
     const endTime = Date.now();
-    if (selectedText.length > 1 && endTime - startTime > 10 && iFrame.style.display === "none") {
+    if (iFrame.selectedText.length > 1 && endTime - startTime > 10 && iFrame.style.display === "none") {
       iFrame.style.display = "block";
       iFrame.style.top = evt.clientY + 20 + 'px'
       iFrame.style.left = evt.clientX + 'px'
-      console.log('我被执行了！',selectedText);
     } else {
       iFrame.style.display = "none";
     }
@@ -49,8 +49,12 @@ Object.assign(iFrame.style, {
 
 export default bexContent((bridge) => {
   bridge.on('wb.command', ({ data, respond }) => {
-    console.log('wb.command', data)
-    respond()
+    const res = data.data
+    if(res.action === 'setIframeSize') {
+      iFrame.style.height = res.height + 'px';
+      iFrame.style.width = res.width + 'px'
+    }
+    respond(iFrame.selectedText)
   })
 })
 
