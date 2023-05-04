@@ -1,7 +1,4 @@
 <template>
-
-
-
     <q-list  bordered separator ref="menuRef">
       <q-item clickable v-ripple @click="go">
         <q-item-section avatar>
@@ -72,15 +69,20 @@ export default defineComponent({
     function go(){
       sendCommand({
         action:'setIframeSize',
-        height: 390,
-        width:360
+        height: 530,
+        width:390
       })
       router.push('/interaction')
     }
     onMounted(()=>{
+      chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
+        console.log(message)
+        sendResponse("rev!")
+        return true;
+      })
       sendCommand({
         action:'setIframeSize',
-        height: 290,
+        height: 390,
         width:360
       })
     })
